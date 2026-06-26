@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daybook — step 4: the portfolio manifest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Catamaran:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Inter:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Archivo:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:"Catamaran",system-ui,sans-serif;background:#f4f5f6;color:#262a2e;line-height:1.5;padding:24px}
+  .wrap{max-width:900px;margin:0 auto}
+  .card{background:#fff;border:1px solid #e6e8ea;border-radius:18px;padding:22px 24px;box-shadow:0 10px 30px rgba(38,42,46,.07);margin-bottom:16px}
+  h1{font-size:23px;margin:0 0 3px} .sub{color:#69707a;font-size:14px;margin:0 0 14px}
+  .env{font-size:12px;color:#69707a;background:#f7f8f9;border:1px solid #eceef0;border-radius:10px;padding:9px 12px;margin-bottom:14px;word-break:break-all} .env b{color:#262a2e}
+  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:10px 15px;cursor:pointer;background:#262a2e;color:#fff}
+  button.ghost{background:#fff;color:#262a2e;border:1px solid #d8dbde} button:disabled{opacity:.4;cursor:not-allowed}
+  h2.sec{font-family:"Quicksand",sans-serif;font-size:17px;margin:2px 0 4px} .sechint{font-size:12.5px;color:#9aa1a9;margin:0 0 10px}
+  .curate .part{margin-bottom:14px}
+  .ph{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .pill{color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px}
+  .pA{background:#f07400}.pB{background:#37a7d5}.pC{background:#fa1c8b}.pD{background:#87ad3e}
+  .ph .nm{font-weight:600;font-size:14px} .ph .ct{margin-left:auto;color:#9aa1a9;font-size:12px}
+  .item{display:flex;gap:10px;align-items:flex-start;border:1px solid #eceef0;border-radius:10px;padding:9px 11px;margin-bottom:7px;background:#fff}
+  .item.out{opacity:.5} .item .cb{margin-top:3px} .item .ty{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9aa1a9}
+  .item .tx{font-size:13.5px} .item .thumb{width:46px;height:46px;border-radius:7px;object-fit:cover;flex:none}
+  .item .body{flex:1;min-width:0}
+  .item .mv{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:11.5px;color:#69707a}
+  .item .mv select{font:inherit;font-size:12px;border:1px solid #d8dbde;border-radius:7px;padding:3px 6px}
+  .item .moved{font-size:11px;color:#b07400;font-style:italic}
+  .look{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+  .look .grp .lbl{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9aa1a9;margin-bottom:7px}
+  .hbtns{display:flex;gap:7px;flex-wrap:wrap} .hb{font:inherit;font-size:13px;font-weight:700;border:1px solid #dcdcd8;background:#fff;color:#3c4247;border-radius:10px;padding:8px 13px;cursor:pointer} .hb[aria-pressed="true"]{background:#262a2e;color:#fff;border-color:#262a2e}
+  .swatches{display:flex;gap:8px} .sw{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1px #dcdcd8;position:relative} .sw[aria-pressed="true"]{box-shadow:0 0 0 2px #262a2e} .sw .d{position:absolute;inset:0;margin:auto;width:8px;height:8px;border-radius:50%}
+  .prs{display:flex;gap:7px} .pr{font:inherit;font-size:12.5px;padding:7px 11px;border-radius:9px;border:1px solid #dcdcd8;background:#fff;cursor:pointer;color:#3c4247} .pr[aria-pressed="true"]{background:#262a2e;color:#fff;border-color:#262a2e}
+  .saved{font-size:12.5px;color:#3c7a4e;margin-left:4px} .unsaved{font-size:12.5px;color:#b07400;margin-left:4px}
+  #log{background:#0f1216;color:#d7e0e6;border-radius:12px;padding:11px 14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;max-height:150px;overflow:auto;white-space:pre-wrap}
+  .ln{display:block} .ok{color:#7fd6a0} .err{color:#ff8b8b} .step{color:#86b7ff} .dim{color:#8b95a0}
+
+  .docwrap{background:#e9e6df;border-radius:16px;padding:22px;margin-top:8px}
+  .sheet{--paper:#fff;--pink:#222;--accent:#666;--accent2:#999;--accent3:#bbb;--g1:#fff;--g2:#fff;--display:"Fraunces",Georgia,serif;--font:"Newsreader",Georgia,serif;
+    position:relative;background:var(--paper);color:var(--pink);font-family:var(--font);max-width:720px;margin:0 auto;border-radius:7px;box-shadow:0 22px 54px rgba(40,30,16,.16);padding:44px 46px 34px;overflow:hidden}
+  .sheet p{font-size:16px;line-height:1.6;margin:0 0 13px}
+  .cover .ck{font-size:12px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);font-family:var(--font)}
+  .cover h1{font-family:var(--display);font-weight:900;font-size:40px;line-height:1;letter-spacing:-.015em;margin:8px 0 4px} .cover .byl{font-size:14px;opacity:.6}
+  .part2{padding-top:22px;margin-top:20px;border-top:1px solid rgba(0,0,0,.12)}
+  .part-h2{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  .part-h2 .pk{font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border-radius:20px;color:#fff;background:var(--accent)} .part-h2 h3{font-family:var(--display);font-weight:600;font-size:22px;margin:0;letter-spacing:-.01em}
+  .passage .k{font-family:var(--font);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.5;margin-bottom:1px}
+  .shot{margin:15px 0} .frame{overflow:hidden;border-radius:3px;background:var(--pink)} .frame img{width:100%;height:100%;object-fit:cover;object-position:var(--px,50%) var(--py,50%);display:block}
+  .shot figcaption{font-family:var(--font);font-size:13px;margin-top:8px;opacity:.78}
+  .pull{font-family:var(--display);font-weight:600;font-size:24px;line-height:1.17;margin:18px 0} .pull cite{display:block;font-family:var(--font);font-style:normal;font-weight:500;font-size:12.5px;opacity:.6;margin-top:5px}
+  .ask{margin:16px 0;display:flex;gap:9px;align-items:flex-start;font-family:var(--display);font-style:italic;font-weight:500;font-size:16px;opacity:.85} .ask .crt{flex:none;width:20px;height:20px;margin-top:2px} .ask .li{display:block;font-style:normal;font-weight:600;opacity:.55;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+  .foot2{margin-top:24px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.5;font-family:var(--font)}
+  .draft{position:absolute;top:18px;right:-46px;transform:rotate(45deg);background:#d23b3b;color:#fff;font-family:"Quicksand",sans-serif;font-weight:700;font-size:12px;letter-spacing:.15em;padding:5px 60px;opacity:.92}
+  .h-jam .frame{clip-path:polygon(0 0,100% 0,100% 92%,93% 100%,86% 93%,79% 100%,72% 94%,65% 100%,58% 93%,51% 100%,44% 94%,37% 100%,30% 93%,23% 100%,16% 93%,9% 100%,0 94%);width:82%;margin-left:auto} .h-jam figcaption{font-style:italic} .h-jam .pull .hl{background:linear-gradient(var(--accent2),var(--accent2)) bottom/100% 30% no-repeat}
+  .h-margin .sheet,.sheet.h-margin{padding:52px 56px} .h-margin .cover h1{font-weight:400;font-size:34px} .h-margin .frame{background:transparent;border:1px solid rgba(0,0,0,.22);width:60%} .h-margin .part-h2 h3{font-weight:400} .h-margin .part-h2 .pk{background:none;color:var(--pink);opacity:.55;padding:0;letter-spacing:.16em} .h-margin .pull{font-weight:400;font-style:italic;font-size:22px;padding-left:18px;border-left:1px solid rgba(0,0,0,.25)}
+  .h-thing .frame{background:var(--accent2);border:5px solid var(--pink);box-shadow:12px 12px 0 var(--accent3);width:76%} .h-thing .part-h2 .pk{background:var(--pink);border-radius:2px;font-weight:700} .h-thing .pull{background:var(--accent);color:#fff;font-weight:900;padding:16px 19px;border-radius:3px} .h-thing .pull cite{color:#fff;opacity:.8}
+  .h-field.sheet,.sheet.h-field{background:linear-gradient(158deg,var(--g1),var(--g2))} .h-field .frame{border-radius:22px 22px 70px 22px} .h-field .part-h2 h3{font-weight:600} .h-field .part-h2 .pk{background:var(--accent)} .h-field .pull{background:rgba(255,255,255,.42);border-radius:16px;padding:15px 19px} .h-field figcaption{font-style:italic}
+  @media print{
+    @page{margin:14mm} body{background:#fff;padding:0}
+    .card,#log,.controls{display:none!important} .docwrap{background:#fff;padding:0;margin:0}
+    .sheet{box-shadow:none;border-radius:0;max-width:none;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact} .sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .part2{break-before:page;border-top:0} .draft{position:fixed;top:42%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:90px;opacity:.12;background:none;color:#d23b3b;padding:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Daybook · step 4 — the portfolio manifest</h1>
+    <p class="sub">Arrange your portfolio, save it, and it remembers. Re-filing here never disturbs your daybook.</p>
+    <div class="env">Origin: <b id="origin">…</b> · Scope: <b>drive.file</b> · Folder: <b>Tallis Arts Award</b></div>
+    <div class="row">
+      <button id="signin">Sign in with Google</button>
+      <button id="signout" class="ghost" disabled>Sign out</button>
+      <button id="reload" class="ghost" disabled>Reload from Drive</button>
+    </div>
+  </div>
+
+  <div class="card controls" id="controls" style="display:none">
+    <h2 class="sec">Choose what goes in, and where</h2>
+    <p class="sechint">Tick to include. The “in portfolio” menu moves an item to a different part of your award — your original filing in the daybook stays as it was.</p>
+    <div class="curate" id="curate"></div>
+    <h2 class="sec" style="margin-top:18px">Pick your look</h2>
+    <div class="look">
+      <div class="grp"><div class="lbl">House</div><div class="hbtns" id="hbtns"></div></div>
+      <div class="grp"><div class="lbl">Palette</div><div class="swatches" id="swatches"></div></div>
+      <div class="grp"><div class="lbl">Type</div><div class="prs" id="prs"></div></div>
+    </div>
+    <div class="row" style="margin-top:18px">
+      <button id="save">Save arrangement to Drive</button>
+      <button id="build" class="ghost">Build my portfolio →</button>
+      <button id="export" class="ghost" disabled>Export draft PDF</button>
+      <span id="status" class="dim" style="font-size:12.5px"></span>
+    </div>
+  </div>
+
+  <div id="out"></div>
+  <div class="card"><div id="log"><span class="ln dim">Waiting for Google sign-in library…</span></div></div>
+</div>
+
+<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
+<script>
+  const CLIENT_ID='53261082370-dhkqc0n753jcvr4cvs5r0tim8q72dl2n.apps.googleusercontent.com';
+  const SCOPE='https://www.googleapis.com/auth/drive.file';
+  const FOLDER='Tallis Arts Award';
+  const MANIFEST='portfolio-manifest.json';
+  const PARTS={A:"Taking part",B:"Being the audience",C:"Arts inspiration",D:"Arts skill share"};
+  const ORDER={Plan:0,Evidence:1,Review:2};
+  const ARMAP={portrait:'3 / 4',square:'1 / 1',landscape:'4 / 3'};
+  const ASKS={A:"Where did taking part get hard, and what kept you going?",B:"What surprised you, watching as an audience?",C:"What did you want to know about your hero that you couldn't find out?",D:"What was it like to slow down and teach someone else?"};
+  const HOUSES=[
+    {id:"jam",name:"Jam",pairs:[{display:'"Fraunces",Georgia,serif',font:'"Newsreader",Georgia,serif',name:"Serif"},{display:'"Bricolage Grotesque",sans-serif',font:'"Inter",sans-serif',name:"Grotesque"}],
+     pals:[{paper:"#f6efe2",ink:"#221c16",accent:"#2f6f7e",accent2:"#d98a2b"},{paper:"#f3e9d6",ink:"#271c12",accent:"#bd7d1c",accent2:"#9c4a1f"},{paper:"#f5efe6",ink:"#1d1a17",accent:"#c0392b",accent2:"#e0a106"}]},
+    {id:"margin",name:"Margin",pairs:[{display:'"Spectral",Georgia,serif',font:'"Spectral",Georgia,serif',name:"Serif"},{display:'"Archivo",sans-serif',font:'"Inter",sans-serif',name:"Grotesque"}],
+     pals:[{paper:"#faf9f4",ink:"#222019",accent:"#a59f90",accent2:"#6b6657"},{paper:"#fbfbfc",ink:"#1f2227",accent:"#9aa3ad",accent2:"#4a5560"},{paper:"#f6f1e7",ink:"#2a241c",accent:"#9fa389",accent2:"#6f6f59"}]},
+    {id:"thing",name:"Thing",pairs:[{display:'"Archivo",sans-serif',font:'"Inter",sans-serif',name:"Heavy"},{display:'"Space Grotesk",sans-serif',font:'"Inter",sans-serif',name:"Block"}],
+     pals:[{paper:"#fbf7ef",ink:"#141414",accent:"#ff2e88",accent2:"#1ec8c8",accent3:"#ffd400"},{paper:"#fff7ed",ink:"#161616",accent:"#e5332a",accent2:"#f59e0b",accent3:"#1f6feb"},{paper:"#f6f7ef",ink:"#181423",accent:"#b026ff",accent2:"#c6f000",accent3:"#ff2d6f"}]},
+    {id:"field",name:"Field",pairs:[{display:'"Newsreader",Georgia,serif',font:'"Newsreader",Georgia,serif',name:"Serif"},{display:'"Quicksand",sans-serif',font:'"Catamaran",sans-serif',name:"Rounded"}],
+     pals:[{paper:"#eef4e0",ink:"#23301f",accent:"#5f8d3e",accent2:"#caa24a",g1:"#eef4e0",g2:"#dcebcb"},{paper:"#e3f1f1",ink:"#163030",accent:"#2f8f8a",accent2:"#d98a2b",g1:"#e6f2f1",g2:"#cfe6ea"},{paper:"#efe9f3",ink:"#2a2440",accent:"#6b5ca8",accent2:"#e0a44e",g1:"#efe8f4",g2:"#e6dcea"}]}
+  ];
+
+  let tokenClient=null,token=null,folderId=null,manifestId=null,items=[],urls=[],h=0,dirty=false;
+  const sel={}; HOUSES.forEach(o=>sel[o.id]={pal:0,pair:0});
+  let pfmap={}; // id -> {include, part}
+  const $=id=>document.getElementById(id);
+  $('origin').textContent=location.origin;
+  function log(m,c){const e=document.createElement('span');e.className='ln'+(c?' '+c:'');e.textContent=m;$('log').appendChild(e);$('log').scrollTop=$('log').scrollHeight;}
+  const auth=()=>({Authorization:'Bearer '+token});
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function crt(c){return '<svg class="crt" viewBox="0 0 80 80" aria-hidden="true"><path fill="'+c+'" d="M70.9,40.2c0-14.5-11.8-19.7-26.3-19.7S8.5,25.7,8.5,40.2s21.6,19.7,36.1,19.7S70.9,54.7,70.9,40.2z"/><circle fill="#fff" cx="53.1" cy="40.2" r="8.5"/><circle fill="'+c+'" cx="56.2" cy="41.7" r="3.2"/></svg>';}
+  function pf(it){ if(!pfmap[it.id]) pfmap[it.id]={include:true,part:it.part}; return pfmap[it.id]; }
+  function markDirty(){ dirty=true; $('status').className='unsaved'; $('status').textContent='unsaved changes'; }
+
+  function gisLoaded(){
+    tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPE,callback:async(r)=>{
+      if(r.error){log('Sign-in failed: '+r.error,'err');return;}
+      token=r.access_token; log('Signed in.','ok'); $('signout').disabled=false;$('reload').disabled=false;$('signin').disabled=true;
+      try{ await ensureFolder(); await loadAll(); }catch(e){ log(e.message,'err'); }
+    }});
+    log('Library ready. You can sign in.','dim');
+  }
+  $('signin').onclick=()=>{ if(tokenClient) tokenClient.requestAccessToken({prompt:'consent'}); };
+  $('signout').onclick=()=>{ if(token) google.accounts.oauth2.revoke(token,()=>{}); token=null;folderId=null;manifestId=null;items=[];pfmap={};$('controls').style.display='none';$('out').innerHTML='';$('signin').disabled=false;$('signout').disabled=true;$('reload').disabled=true;log('Signed out.','dim'); };
+  $('reload').onclick=async()=>{ try{ await loadAll(); }catch(e){ log(e.message,'err'); } };
+
+  async function api(url,opts){
+    const r=await fetch(url,opts||{headers:auth()});
+    if(r.status===401){ log('Session expired — sign in again.','err'); throw new Error('401'); }
+    if(!r.ok){ throw new Error('HTTP '+r.status+': '+(await r.text()).slice(0,200)); }
+    return r;
+  }
+  async function ensureFolder(){
+    const q="mimeType='application/vnd.google-apps.folder' and name='"+FOLDER+"' and trashed=false";
+    const d=await (await api('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id,name)',{headers:auth()})).json();
+    if(d.files&&d.files.length){ folderId=d.files[0].id; return; }
+    throw new Error('No daybook folder yet — add some entries with the earlier steps first.');
+  }
+
+  async function loadAll(){
+    log('Gathering your daybook from Drive…','step');
+    urls.forEach(u=>URL.revokeObjectURL(u)); urls=[];
+    manifestId=null; let manifestData=null;
+    const q="'"+folderId+"' in parents and trashed=false";
+    const d=await (await api('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id,name,mimeType,appProperties,createdTime)&orderBy=createdTime&pageSize=300',{headers:auth()})).json();
+    const all=(d.files||[]).filter(f=>(f.appProperties||{}).app==='daybook');
+    const entryFiles=[];
+    for(const f of all){
+      if((f.appProperties||{}).kind==='manifest'){ manifestId=f.id; continue; }
+      entryFiles.push(f);
+    }
+    items=await Promise.all(entryFiles.map(async f=>{
+      const a=f.appProperties||{};
+      if((f.mimeType||'').indexOf('image/')===0){
+        const b=await (await api('https://www.googleapis.com/drive/v3/files/'+f.id+'?alt=media',{headers:auth()})).blob();
+        const u=URL.createObjectURL(b); urls.push(u);
+        return {id:f.id,isImg:true,part:a.part||'C',kind:a.kind||'Evidence',type:a.type||'Photo',caption:a.caption||'',frame:a.frame||'square',px:a.px||'50',py:a.py||'50',url:u,createdAt:f.createdTime};
+      }
+      const c=await (await api('https://www.googleapis.com/drive/v3/files/'+f.id+'?alt=media',{headers:auth()})).json();
+      return {id:f.id,isImg:false,part:c.part||a.part||'A',kind:c.kind||a.kind||'Evidence',type:c.type||a.type||'Note',text:c.text||'',createdAt:c.createdAt||f.createdTime};
+    }));
+
+    if(manifestId){
+      try{ manifestData=await (await api('https://www.googleapis.com/drive/v3/files/'+manifestId+'?alt=media',{headers:auth()})).json(); }
+      catch(_){ manifestData=null; }
+    }
+    pfmap={};
+    if(manifestData && manifestData.items){
+      pfmap=manifestData.items;
+      const hi=HOUSES.findIndex(o=>o.id===manifestData.house); if(hi>=0) h=hi;
+      if(manifestData.house && sel[manifestData.house]) sel[manifestData.house]={pal:manifestData.pal||0,pair:manifestData.pair||0};
+      log('Restored your saved arrangement from the manifest.','ok');
+    } else {
+      log('No saved arrangement yet — starting with everything in, filed as you first did.','dim');
+    }
+    // ensure an entry for every current item (defaults), and drop manifest entries for items no longer present
+    const present={}; items.forEach(it=>{ present[it.id]=true; pf(it); });
+    Object.keys(pfmap).forEach(id=>{ if(!present[id]) delete pfmap[id]; });
+
+    log('Gathered '+items.length+' item'+(items.length===1?'':'s')+' ('+items.filter(i=>i.isImg).length+' photo, '+items.filter(i=>!i.isImg).length+' written).','ok');
+    $('controls').style.display=items.length?'block':'none';
+    if(!items.length) $('out').innerHTML='<div class="card">Nothing in your daybook yet. Add a few entries and photos with the earlier steps, then come back.</div>';
+    dirty=false; $('status').className='saved'; $('status').textContent=manifestId?'loaded from your saved arrangement':'';
+    renderCurate(); renderLook();
+  }
+
+  function renderCurate(){
+    let html='';
+    Object.keys(PARTS).forEach(p=>{
+      const its=items.filter(i=>pf(i).part===p).sort((a,b)=>(ORDER[a.kind]??9)-(ORDER[b.kind]??9));
+      const on=its.filter(i=>pf(i).include).length;
+      html+='<div class="part"><div class="ph"><span class="pill p'+p+'">Part '+p+'</span><span class="nm">'+PARTS[p]+'</span><span class="ct">'+on+' of '+its.length+' in</span></div>';
+      if(!its.length) html+='<div style="color:#9aa1a9;font-size:13px;font-style:italic;margin-bottom:6px">nothing here</div>';
+      its.forEach(it=>{
+        const e=pf(it);
+        const thumb=it.isImg?'<img class="thumb" src="'+it.url+'" alt="">':'';
+        const label=it.isImg?esc(it.caption||'(photo)'):esc((it.text||'').slice(0,90))+((it.text||'').length>90?'…':'');
+        const moved=(e.part!==it.part)?'<span class="moved">moved from Part '+it.part+'</span>':'';
+        const opts=Object.keys(PARTS).map(k=>'<option value="'+k+'"'+(k===e.part?' selected':'')+'>Part '+k+'</option>').join('');
+        html+='<div class="item'+(e.include?'':' out')+'"><input type="checkbox" class="cb" '+(e.include?'checked':'')+' data-id="'+it.id+'">'+thumb+
+          '<div class="body"><div class="ty">'+esc(it.kind)+' · '+esc(it.type)+'</div><div class="tx">'+label+'</div>'+
+          '<div class="mv">in portfolio: <select data-id="'+it.id+'">'+opts+'</select> '+moved+'</div></div></div>';
+      });
+      html+='</div>';
+    });
+    $('curate').innerHTML=html;
+    $('curate').querySelectorAll('input.cb').forEach(cb=>cb.onchange=()=>{ pf({id:cb.dataset.id,part:'A'}).include=cb.checked; markDirty(); renderCurate(); });
+    $('curate').querySelectorAll('.mv select').forEach(s=>s.onchange=()=>{ pfmap[s.dataset.id].part=s.value; markDirty(); renderCurate(); });
+  }
+
+  function renderLook(){
+    $('hbtns').innerHTML=HOUSES.map((o,i)=>'<button class="hb" aria-pressed="'+(i===h)+'" data-h="'+i+'">'+o.name+'</button>').join('');
+    $('hbtns').querySelectorAll('.hb').forEach(b=>b.onclick=()=>{h=+b.dataset.h; markDirty(); renderLook();});
+    const o=HOUSES[h], s=sel[o.id];
+    $('swatches').innerHTML=o.pals.map((p,i)=>'<button class="sw" style="background:'+p.paper+'" aria-pressed="'+(i===s.pal)+'"><span class="d" style="background:'+p.accent+'"></span></button>').join('');
+    $('prs').innerHTML=o.pairs.map((p,i)=>'<button class="pr" aria-pressed="'+(i===s.pair)+'">'+p.name+'</button>').join('');
+    $('swatches').querySelectorAll('.sw').forEach((b,i)=>b.onclick=()=>{s.pal=i; markDirty(); renderLook();});
+    $('prs').querySelectorAll('.pr').forEach((b,i)=>b.onclick=()=>{s.pair=i; markDirty(); renderLook();});
+  }
+
+  async function saveManifest(){
+    const o=HOUSES[h], s=sel[o.id];
+    const data={version:1, house:o.id, pal:s.pal, pair:s.pair, items:pfmap, updatedAt:new Date().toISOString()};
+    const content=JSON.stringify(data);
+    log('Saving your arrangement to the manifest…','step');
+    if(manifestId){
+      await api('https://www.googleapis.com/upload/drive/v3/files/'+manifestId+'?uploadType=media',{method:'PATCH',headers:Object.assign(auth(),{'Content-Type':'application/json'}),body:content});
+    } else {
+      const meta={name:MANIFEST,mimeType:'application/json',parents:[folderId],appProperties:{app:'daybook',kind:'manifest'}};
+      const boundary='mf'+Date.now();
+      const body='--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+boundary+'\r\nContent-Type: application/json\r\n\r\n'+content+'\r\n--'+boundary+'--';
+      const cr=await api('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:Object.assign(auth(),{'Content-Type':'multipart/related; boundary='+boundary}),body});
+      manifestId=(await cr.json()).id;
+    }
+    dirty=false; $('status').className='saved'; $('status').textContent='saved · reload to prove it persists';
+    log('Arrangement saved to Drive.','ok');
+  }
+  $('save').onclick=async()=>{ try{ await saveManifest(); }catch(e){ log('Save failed: '+e.message,'err'); } };
+
+  function itemHTML(it){
+    if(it.isImg){
+      const ar=ARMAP[it.frame]||ARMAP.square;
+      return '<figure class="shot"><div class="frame" style="aspect-ratio:'+ar+';--px:'+esc(it.px)+'%;--py:'+esc(it.py)+'%"><img src="'+it.url+'" alt=""></div>'+(it.caption?'<figcaption>'+esc(it.caption)+'</figcaption>':'')+'</figure>';
+    }
+    if(it.kind==='Review'||it.type==='Quote'||it.type==='Comment'){
+      return '<blockquote class="pull"><span class="hl">'+esc(it.text)+'</span><cite>'+esc(it.kind==='Review'?'My reflection':it.type)+'</cite></blockquote>';
+    }
+    return '<div class="passage"><div class="k">'+esc(it.kind)+'</div><p>'+esc(it.text)+'</p></div>';
+  }
+  function buildDocHTML(p){
+    let html='<div class="cover"><div class="ck">Bronze Arts Award · portfolio</div><h1>My Arts Award</h1><div class="byl">Thomas Tallis School</div></div>';
+    Object.keys(PARTS).forEach(pt=>{
+      const its=items.filter(i=>pf(i).part===pt&&pf(i).include).sort((a,b)=>(ORDER[a.kind]??9)-(ORDER[b.kind]??9));
+      if(!its.length) return;
+      html+='<section class="part2"><div class="part-h2"><span class="pk">Part '+pt+'</span><h3>'+PARTS[pt]+'</h3></div>';
+      html+=its.map(it=>itemHTML(it)).join('');
+      html+='<div class="ask">'+crt(p.accent2)+'<span><span class="li">Inquisitive asks</span>'+ASKS[pt]+'</span></div></section>';
+    });
+    html+='<div class="foot2">Draft · Bronze Arts Award · to be reviewed with your adviser</div><div class="draft">DRAFT</div>';
+    return html;
+  }
+  $('build').onclick=()=>{
+    const o=HOUSES[h], s=sel[o.id], p=o.pals[s.pal], f=o.pairs[s.pair];
+    const chosen=items.filter(i=>pf(i).include).length;
+    if(!chosen){ log('Nothing selected to build.','err'); return; }
+    log('Assembling '+chosen+' chosen item'+(chosen===1?'':'s')+' in the '+o.name+' house…','step');
+    const sheet=document.createElement('div'); sheet.className='sheet h-'+o.id;
+    ['paper','ink','accent','accent2','accent3','g1','g2'].forEach(k=>{ if(p[k]) sheet.style.setProperty(k==='ink'?'--pink':'--'+k,p[k]); });
+    sheet.style.setProperty('--display',f.display); sheet.style.setProperty('--font',f.font);
+    sheet.innerHTML=buildDocHTML(p);
+    $('out').innerHTML='<div class="docwrap"></div>'; $('out').querySelector('.docwrap').appendChild(sheet);
+    $('export').disabled=false; log('Built. Scroll down, or export a draft PDF.','ok');
+    $('out').scrollIntoView({behavior:'smooth'});
+  };
+  $('export').onclick=()=>window.print();
+</script>
+</body>
+</html>
